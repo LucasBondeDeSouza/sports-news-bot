@@ -2,6 +2,7 @@ import telebot
 import requests
 from bs4 import BeautifulSoup
 import os
+import time
 
 API_KEY = os.environ.get("TELEGRAM_API_KEY")
 CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
@@ -29,6 +30,8 @@ def extrair_primeira_noticia():
                 mensagem += f"🔗 [Leia mais]({link})"
 
             return link, mensagem
+    else:
+        print(f"[ERRO] Falha ao acessar o site. Status code: {requisicao.status_code}")
     return None, None
 
 def monitorar_noticias():
@@ -41,11 +44,20 @@ def monitorar_noticias():
             ultimo_link_enviado = f.read().strip()
 
     link, mensagem = extrair_primeira_noticia()
-    if link and link != ultimo_link_enviado:
-        bot.send_message(CHAT_ID, mensagem, parse_mode="Markdown")
-        # Salva o novo link
-        with open(caminho, "w") as f:
-            f.write(link)
 
-# Inicia o monitoramento
-monitorar_noticias()
+    if link:
+        if link != ultimo_link_enviado:
+            print(f"[NOVO] Nova notícia detectada. Enviando para o Telegram...")
+            bot.send_message(CHAT_ID, mensagem, parse_mode="Markdown")
+            with open(caminho, "w") as f:
+                f.write(link)
+            print(f"[OK] Notícia enviada e link salvo.")
+        else:
+            print(f"[REPETIDA] Nenhuma nova notícia. Link já enviado anteriormente.")
+    else:
+        print(f"[ERRO] Não foi possível extrair a notícia.")
+
+while True:
+    print(f"\n[LOG] Verificando por novas notícias... {time.strftime('%Y-%m-%d %H:%M:%S')}")
+    monitorar_noticias()
+    time.sleep(300)  # Espera 5 minutos
