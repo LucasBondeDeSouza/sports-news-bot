@@ -7,9 +7,6 @@ API_KEY = os.environ.get("TELEGRAM_API_KEY")
 CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 bot = telebot.TeleBot(API_KEY)
 
-# Armazenar o link da última notícia enviada
-ultimo_link_enviado = ""
-
 def extrair_primeira_noticia():
     url = "https://ge.globo.com/"
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -36,9 +33,9 @@ def extrair_primeira_noticia():
 
 def monitorar_noticias():
     caminho = "ultimo_link.txt"
-    ultimo_link_enviado = ""
 
     # Tenta ler o último link enviado
+    ultimo_link_enviado = ""
     if os.path.exists(caminho):
         with open(caminho, "r") as f:
             ultimo_link_enviado = f.read().strip()
@@ -50,5 +47,5 @@ def monitorar_noticias():
         with open(caminho, "w") as f:
             f.write(link)
 
-# Inicia o monitoramento contínuo
+# Inicia o monitoramento
 monitorar_noticias()
