@@ -2,7 +2,6 @@ import telebot
 import requests
 from bs4 import BeautifulSoup
 import os
-import time
 
 API_KEY = os.environ.get("TELEGRAM_API_KEY")
 CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
@@ -57,7 +56,5 @@ def send_message():
         bot.send_message(CHAT_ID, message, parse_mode="Markdown")
 
 
-# Executar a função de enviar mensagem á cada 1 minuto
-while True:
-    send_message()
-    time.sleep(600)
+# Executar a função de enviar mensagem
+send_message()
